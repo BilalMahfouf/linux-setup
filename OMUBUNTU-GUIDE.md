@@ -1,9 +1,9 @@
 # Ombuntu Guide — This Machine
 
-> Generated 2026-10-13 from a read-only audit of this installation.
+> Generated 2026-10-13 from a read-only audit of this installation, updated 2026-10-14 for the COSMIC-style shortcut overlay.
 > It describes **your actual system**, not a generic Hyprland setup.
-> Nothing was changed during the audit.
-> Conventions: **(verified)** = seen in your config or confirmed by a command on this machine.
+> Shortcuts follow **COSMIC (System76) semantics** via `~/.config/hypr/cosmic.conf` (strict mode), loaded after the Omarchy defaults.
+> Conventions: **(verified)** = seen in your config or confirmed by a command on this machine (`hyprctl binds` = 254 bind lines after the overlay).
 > **(upstream default)** = standard behavior of the installed component, not customized here.
 > **(unverified)** = could not be confirmed — treated as unknown.
 
@@ -52,28 +52,31 @@
 
 ## 2. Quick start — the shortcuts that matter most
 
-`Super` = the Windows key (between Ctrl and Alt). All rows verified in your config.
+`Super` = the Windows key (between Ctrl and Alt). COSMIC-style: `Super` alone opens the launcher. All rows verified in live binds.
 
 | Keys | Action | Plain English |
 |---|---|---|
-| `Super` + `Enter` | Terminal | Open Alacritty in the current project's directory |
-| `Super` + `Space` | Walker | App launcher / search (type, `Enter` to open) |
-| `Super` + `W` | `killactive` | Close the focused window |
-| `Super` + `←↑↓→` | `movefocus` | Move focus between tiled windows |
-| `Super` + `1`…`0` | `workspace 1…10` | Jump to workspace 1–10 (top-row number keys) |
-| `Super` + `Shift` + `1`…`0` | `movetoworkspace` | Send the focused window to that workspace and follow it |
-| `Super` + `T` / `Super` + `F` | float / fullscreen toggle | Free a window from tiling / make it fullscreen |
-| `Super` + `Esc` | System menu | Lock, suspend, logout, restart, shutdown |
+| `Super` (tap) / `Super` + `Space` / `Super` + `/` | Walker launcher | App launcher / search (type, `Enter` to open) |
+| `Super` + `T` (`Enter` also works) | Terminal | Open Alacritty in the current project's directory |
+| `Super` + `F` | Files | Open Nautilus |
+| `Super` + `B` | Browser | Open the default browser (Chrome) |
+| `Super` + `Q` | `killactive` | Close the focused window |
+| `Super` + `←↑↓→` or `H`/`J`/`K`/`L` | `movefocus` | Move focus between tiled windows |
+| `Super` + `1`…`9` / `Super` + `0` | `workspace 1…9` / last workspace | Jump to workspace N, or back to where you were |
+| `Super` + `Shift` + `1`…`9` / `0` | `movetoworkspace` | Send the focused window there and follow it |
+| `Super` + `G` / `Super` + `M` | float / maximize toggle | Free a window from tiling / maximize it (`F11` = fullscreen) |
+| `Super` + `Esc` | Lock now | `omarchy-system-lock` → hyprlock |
 | `Super` + `K` | Keybinding list | Searchable list of your real bindings (via Walker) |
 | `Super` + `Shift` + `K` | Cheatsheet | Beginner cheatsheet in a floating browser window |
 
-Survival extras: `Print` = screenshot, `Super` + `Tab` = next workspace, `Super` + `S` = scratchpad (a hideable sticky window).
+Survival extras: `Print` = screenshot, `Super` + `Tab` = window switcher, `Super` + `S` = window group (stacking), `Super` + `Shift` + `S` = scratchpad (relocated sticky window).
+Omarchy → COSMIC moved keys: `W` close → `Q` · `T` float → `G` · `F` fullscreen → `F11` · `S` scratchpad → `Shift+S` · `Esc` system menu → lock · `Tab` next-workspace → window switcher.
 
 ---
 
 ## 3. Keyboard shortcut reference
 
-Sources (all verified on disk): your `~/.config/hypr/bindings.conf` (app launchers) plus the shipped defaults `~/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf`, `utilities.conf`, `media.conf`, `clipboard.conf`. Total: 192 binds (`hyprctl binds | grep -c bind`).
+Sources (all verified on disk + live): your `~/.config/hypr/bindings.conf` (app launchers), `~/.config/hypr/cosmic.conf` (COSMIC overlay, strict mode), plus the shipped defaults `~/.local/share/omarchy/default/hypr/bindings/tiling-v2.conf`, `utilities.conf`, `media.conf`, `clipboard.conf`. Total: 254 binds (`hyprctl binds | grep -c "^bind"`).
 
 **Reading the tables:** `code:10…19` means the physical number-row keys 1–0, so bindings work regardless of keyboard layout. Mouse binds (`Super` + scroll / drag) are included where configured.
 
@@ -81,9 +84,12 @@ Sources (all verified on disk): your `~/.config/hypr/bindings.conf` (app launche
 
 | Keys | Runs (verified) | Notes |
 |---|---|---|
-| `Super` + `Enter` | `xdg-terminal-exec --dir="$(ombuntu-cmd-terminal-cwd)"` | Terminal rooted at the active window's project dir |
+| `Super` + `Enter` | `xdg-terminal-exec --dir="$(ombuntu-cmd-terminal-cwd)"` | Terminal rooted at the active window's project dir (kept as compat alias) |
+| `Super` + `T` | same terminal command | COSMIC primary terminal key |
+| `Super` + `F` | `nautilus --new-window` | COSMIC primary file-manager key (was fullscreen) |
 | `Super` + `Alt` + `Enter` | same terminal + `tmux attach \|\| tmux new -s Work` | Jump straight into (or create) tmux session `Work` |
-| `Super` + `Shift` + `Enter` / `Super` + `Shift` + `B` | `ombuntu-launch-browser` | Default browser (Chrome) |
+| `Super` + `Shift` + `Enter` / `Super` + `Shift` + `B` | `ombuntu-launch-browser` | Default browser (Chrome); COSMIC primary is the simpler `Super` + `B` |
+| `Super` + `B` | `omarchy-launch-browser` | COSMIC primary browser key |
 | `Super` + `Shift` + `Alt` + `B` | browser `--private` | Private window |
 | `Super` + `Shift` + `F` | `nautilus --new-window` | File manager |
 | `Super` + `Shift` + `Alt` + `F` | nautilus at terminal cwd | File manager in current project dir |
@@ -99,46 +105,54 @@ Sources (all verified on disk): your `~/.config/hypr/bindings.conf` (app launche
 
 | Keys | Action | Notes |
 |---|---|---|
-| `Super` + `W` | Close focused window | Same as clicking ✕ |
+| `Super` + `Q` / `Alt` + `F4` | Close focused window | Same as clicking ✕ (`Super`+`W` now opens the overview — see §3.4) |
+| `Super` + `Alt` + `Esc` | Terminate window | `killactive` |
 | `Ctrl` + `Alt` + `Delete` | Close **all** windows | Destructive — use deliberately |
-| `Super` + `←↑↓→` | Focus neighbor | Core tiling navigation |
-| `Super` + `Shift` + `←↑↓→` | Swap window with neighbor | Reorders tiles |
+| `Super` + `←↑↓→` or `H`/`J`/`K`/`L` | Focus neighbor | Core tiling navigation (HJKL added by COSMIC overlay) |
+| `Super` + `Shift` + `←↑↓→` or `H`/`J`/`K`/`L` | Swap window with neighbor | Reorders tiles (COSMIC "Move"; arrows were already bound, HJKL added) |
+| `Super` + `X`, then arrows/HJKL, `Esc`/`Enter` to exit | Swap mode | COSMIC SwapWindow emulation via submap |
 | `Super` + drag with left mouse | Move window | `Super` + right-drag resizes |
-| `Super` + `-` / `=` | Widen/narrow 100 px | `-` expands left, `=` shrinks |
-| `Super` + `Shift` + `-` / `=` | Taller/shorter 100 px | |
-| `Super` + `J` | `togglesplit` | Flip split direction of the tile |
-| `Super` + `T` | Toggle floating/tiling | Floating windows drag freely, stay centered 875×600 |
-| `Super` + `F` / `Super` + `Ctrl` + `F` / `Super` + `Alt` + `F` | Fullscreen / tiled-fullscreen / full-width | Three flavors; `Esc` or repeat to exit |
-| `Super` + `O` | Pop out (float + pin) | Pinned floats show above workspaces |
-| `Super` + `P` | Pseudo-tile (dwindle) | |
-| `Super` + `L` | Toggle workspace layout | dwindle ↔ (alternate) |
-| `Super` + `G` / `Super` + `Alt` + `G` | Group / ungroup windows | Tabbed window groups; `Super`+`Alt`+`Tab` cycles inside a group |
-| `Alt` + `Tab` / `Alt` + `Shift` + `Tab` | Cycle windows on workspace | Also brings the window to top |
+| `Super` + `R` / `Super` + `Shift` + `R`, then arrows/HJKL, `Esc`/`Enter` to exit | Resize mode (outwards/inwards) | COSMIC resize emulation via submap (replaces `Super` + `-`/`=`, which still work underneath) |
+| `Super` + `-` / `=` | Widen/narrow 100 px | Kept from defaults; `-` expands left, `=` shrinks |
+| `Super` + `Shift` + `-` / `=` | Taller/shorter 100 px | Kept from defaults |
+| `Super` + `O` | `togglesplit` | Flip split direction of the tile (was `Super`+`J`) |
+| `Super` + `G` | Toggle floating/tiling | Floating windows drag freely, stay centered 875×600 (was `Super`+`T`) |
+| `Super` + `M` / `Super` + `F11` | Maximize (keep gaps) / fullscreen | COSMIC pair; `Esc` or repeat to exit |
+| `Super` + `S` / `Super` + `Alt` + `G` | Group / ungroup windows | COSMIC stacking = Hyprland tabbed groups; `Super`+`Alt`+`Tab` cycles inside a group (was `Super`+`G`) |
+| `Super` + `Y` | Toggle workspace layout | dwindle ↔ alternate via `omarchy-hyprland-workspace-layout-toggle` (was `Super`+`L`) |
+| `Super` + `P` | Pseudo-tile (dwindle) | Kept from defaults |
+| `Super` + `Tab` / `Super` + `Shift` + `Tab` | Cycle windows on workspace | COSMIC window switcher + bring-to-top (was workspace cycling; `Alt`+`Tab` also still works) |
+| `Super` + `U` / `I` | — | No Hyprland equivalent to COSMIC tiling-tree select — intentionally unmapped |
 
 ### 3.3 Workspaces, monitors, scratchpad
 
-10 workspaces; 1–5 always shown in Waybar (persistent).
+10 workspaces exist, but COSMIC uses 9 + last: `Super`+`1`…`9` jump, `Super`+`0` returns to the last workspace (workspace 10 is no longer bound).
 
 | Keys | Action | Notes |
 |---|---|---|
-| `Super` + `1`…`0` | Go to workspace 1–10 | |
-| `Super` + `Shift` + `1`…`0` | Move window there **and follow** | |
-| `Super` + `Shift` + `Alt` + `1`…`0` | Move window there **silently** (stay put) | Best for parking builds/logs |
-| `Super` + `Tab` / `+Shift` / `+Ctrl` | Next / previous / last-visited workspace | |
-| `Super` + scroll | Scroll through workspaces | |
-| `Super` + `S` | Toggle scratchpad | One sticky window that hides/shows anywhere |
-| `Super` + `Alt` + `S` | Send window to scratchpad | |
-| `Super` + `Shift` + `Alt` + `←↑↓→` | Move workspace to another monitor | Single-monitor machine: no visible effect today |
-| `Ctrl` + `Alt` + `Tab` (+`Shift`) | Focus next/previous monitor | Ditto |
+| `Super` + `1`…`9` / `Super` + `0` | Go to workspace 1–9 / last workspace | `0` = `workspace, previous` |
+| `Super` + `Shift` + `1`…`9` / `0` | Move window there **and follow** | `0` = `movetoworkspace, previous` |
+| `Super` + `Shift` + `Alt` + `1`…`9` / `0` | Move window there **silently** (stay put) | Best for parking builds/logs |
+| `Super` + `Ctrl` + `←↑↓→` or `H`/`J`/`K`/`L` | Previous / next workspace | COSMIC workspace navigation |
+| `Super` + `Shift` + `Ctrl` + `←↑↓→` or `H`/`J`/`K`/`L` | Move window to previous / next workspace | COSMIC move-across-workspaces |
+| `Super` + `Alt` + `←↑↓→` or `H`/`J`/`K`/`L` | Focus monitor in that direction | COSMIC output navigation (replaces `moveintogroup` on these keys — grouping is on `S` now) |
+| `Super` + `Tab` | Window switcher, not workspace cycling | See §3.2 |
+| `Super` + `scroll` | Scroll through workspaces | Kept from defaults |
+| `Super` + `Shift` + `S` | Toggle scratchpad | Relocated — `Super`+`S` is stacking now |
+| `Super` + `Shift` + `Alt` + `S` | Send window to scratchpad | Relocated |
+| `Super` + `Shift` + `Alt` + `←↑↓→` | Move workspace to another monitor | Kept from defaults; single-monitor machine: no visible effect today |
+| `Ctrl` + `Alt` + `Tab` (+`Shift`) | Focus next/previous monitor | Kept from defaults; ditto |
 | `Super` + `/` (`+Alt` = reverse) | Cycle monitor scaling | Handy when you plug in an external display |
 
 ### 3.4 Menus, bar, settings panels
 
 | Keys | Action |
 |---|---|
-| `Super` + `Space` | Walker: apps, files (`.` prefix), symbols (`:`), calculator (`=`), web (`@`), clipboard (`$`), provider list (`/`) |
+| `Super` (tap) / `Super` + `Space` / `Super` + `/` | Walker launcher: apps, files (`.` prefix), symbols (`:`), calculator (`=`), web (`@`), clipboard (`$`), provider list (`/`) |
+| `Super` + `A` | Walker (COSMIC App Library approximation — Walker has no separate grid) |
+| `Super` + `W` | Walker (COSMIC Workspace Overview approximation — Walker has no overview provider; `Super`+`Tab` is the real switcher) |
 | `Super` + `Alt` + `Space` | `omarchy-menu` (the master menu: System, Style, Setup, Install, Learn, …) |
-| `Super` + `Esc` or `XF86PowerOff` key | System menu: Screensaver, Lock, Suspend, Logout, Restart, Shutdown (verified in `omarchy-menu`) |
+| `Super` + `Esc` | Lock now (`omarchy-system-lock`); system menu moved to `Super` + `Alt` + `Space` → System |
 | `Super` + `K` | Searchable keybinding list (`omarchy-menu-keybindings` — reads your live config) |
 | `Super` + `Shift` + `K` | Beginner cheatsheet (`ombuntu-cheatsheet`, needs Chrome — installed ✓) |
 | `Super` + `Ctrl` + `E` | Emoji/symbol picker |
@@ -161,7 +175,9 @@ Sources (all verified on disk): your `~/.config/hypr/bindings.conf` (app launche
 | `Super` + `C` / `V` / `X` | Universal copy / paste / cut | Sends `Ctrl`+`Insert` / `Shift`+`Insert` / `Ctrl`+`X` to the focused window |
 | `Super` + `Ctrl` + `V` | Clipboard history (Walker) | |
 | In terminals | `Ctrl`+`Shift`+`C` / `Ctrl`+`Shift`+`V` | (upstream default — no custom Alacritty keybinds here) |
-| `Super` + `Ctrl` + `L` | Lock now | `omarchy-system-lock` → hyprlock; lid-close on external monitors can also trigger internal-display handling |
+| `Super` + `Ctrl` + `L` | Lock now (kept alias) | `omarchy-system-lock` → hyprlock; COSMIC primary is the simpler `Super` + `Esc`; lid-close on external monitors can also trigger internal-display handling |
+| `Super` + `Shift` + `Esc` | Log out | `omarchy-system-logout` (COSMIC binding) |
+| `XF86PowerOff` key | Power menu | `omarchy-menu system` |
 
 ### 3.6 Sound, brightness, playback keys
 
@@ -184,7 +200,8 @@ All verified in `bindings/media.conf`; volume/brightness show an on-screen displ
 | `Super` + `Ctrl` + `I` | Toggle lock-on-idle | |
 | `Super` + `Ctrl` + `N` | Toggle nightlight (hyprsunset) | |
 | `Super` + `Ctrl` + `Delete` (+`Alt`) | Toggle laptop display (mirror) | Lid-switch binds automate this with external monitors |
-| `Super` + `Ctrl` + `Z` / `+Alt` + `Z` | Zoom in / reset zoom | Cursor zoom factor |
+| `Super` + `=` / `-` (or `.` / `,`) | Zoom in / out | Cursor zoom factor (COSMIC binding; replaces `Super`+`Ctrl`+`Z` as primary) |
+| `Super` + `Ctrl` + `Z` / `+Alt` + `Z` | Zoom in / reset zoom | Cursor zoom factor (kept alias; reset kept on `Super`+`Ctrl`+`Alt`+`Z`) |
 | `Super` + `Ctrl` + `R` / combos | Set / show / clear reminders | |
 | `Super` + `Ctrl` + `S` | Share menu | |
 | `Super` + `Ctrl` + `.` | Transcode menu | |
@@ -224,29 +241,29 @@ Config: `~/.config/tmux/tmux.conf`. **Prefix = `Ctrl`+`Space`** (classic `Ctrl`+
 
 ### 4.2 Open applications
 
-- `Super` + `Space`, type a few letters, `Enter`. Walker learns; prefixes: `.` files, `=` calculator, `:` symbols, `@` web search, `$` clipboard history.
-- Or use direct keys from §3.1 (terminal, browser, files, editor).
+- `Super` (tap), `Super` + `Space`, or `Super` + `/`: type a few letters, `Enter`. Walker learns; prefixes: `.` files, `=` calculator, `:` symbols, `@` web search, `$` clipboard history.
+- Or use direct keys from §3.1 (`Super`+`T` terminal, `Super`+`F` files, `Super`+`B` browser, `Super`+`Enter` terminal alias).
 - Check *is it installed first*: launcher entries for Spotify, Obsidian, Typora, LazyDocker have no backend on this machine (see §9) — prefer `Super` + `Space` to see what truly exists.
 
 ### 4.3 Terminals
 
-- `Super` + `Enter` → Alacritty, starting in the focused window's project directory (cwd-aware).
+- `Super` + `Enter` → Alacritty, starting in the focused window's project directory (cwd-aware). `Super` + `T` does the same (COSMIC primary).
 - `Super` + `Alt` + `Enter` → straight into tmux (`attach || new -s Work`).
 - Everyday shell helps (verified in `~/.local/share/omarchy/default/bash/`): `ls/lt` (eza), `cd` = zoxide smart-jump (`z <fragment>`), `ff` fuzzy-find files, `n` opens nvim, `t` attaches tmux, `g` = git, `d` = docker alias (docker itself isn't installed — see §9).
 
 ### 4.4 Tiled windows
 
-Windows tile automatically (dwindle: splits alternate, `preserve_split`, `force_split=2`). Focus with `Super` + arrows; swap with `Super` + `Shift` + arrows; resize with `Super` + `-`/`=`; new windows take roughly half the space. Gaps are 5 px in / 10 px out with a 2 px cyan-green active border (theme `tokyo-night`).
+Windows tile automatically (dwindle: splits alternate, `preserve_split`, `force_split=2`). Focus with `Super` + arrows/HJKL; swap with `Super` + `Shift` + arrows/HJKL or `Super` + `X` swap mode; resize with `Super` + `R` mode (legacy `Super` + `-`/`=` still works); new windows take roughly half the space. Gaps are 5 px in / 10 px out with a 2 px cyan-green active border (theme `tokyo-night`).
 
 ### 4.5 Floating windows
 
-`Super` + `T` frees a window (drag by holding `Super` + left mouse; resize with `Super` + right-drag). Dialogs/file pickers, calculators, TUI panels (audio/bluetooth/wifi/btop), screenshots tools and the cheatsheet float automatically by rule. `Super` + `O` pops a window out pinned-on-top.
+`Super` + `G` frees a window (drag by holding `Super` + left mouse; resize with `Super` + right-drag). Dialogs/file pickers, calculators, TUI panels (audio/bluetooth/wifi/btop), screenshots tools and the cheatsheet float automatically by rule. `Super` + `S` groups windows into tabs instead.
 
 ### 4.6 Workspaces
 
-- Go: `Super` + `1`…`0`. Cycle: `Super` + `Tab`. Return where you were: `Super` + `Ctrl` + `Tab`.
-- **Move a window:** `Super` + `Shift` + `N` (you follow it) or `Super` + `Shift` + `Alt` + `N` (it goes silently — ideal for parking builds).
-- **Scratchpad:** `Super` + `Alt` + `S` stashes a window (e.g. a scratch terminal); `Super` + `S` summons/hides it on any workspace.
+- Go: `Super` + `1`…`9`, back: `Super` + `0`. Step: `Super` + `Ctrl` + arrows/HJKL. Switch windows: `Super` + `Tab`.
+- **Move a window:** `Super` + `Shift` + `N` (you follow it) or `Super` + `Shift` + `Alt` + `N` (it goes silently — ideal for parking builds). Step to neighbor: `Super` + `Shift` + `Ctrl` + arrows.
+- **Scratchpad:** `Super` + `Shift` + `Alt` + `S` stashes a window (e.g. a scratch terminal); `Super` + `Shift` + `S` summons/hides it on any workspace.
 
 ### 4.7 Find installed applications
 
@@ -272,8 +289,8 @@ Windows tile automatically (dwindle: splits alternate, `preserve_split`, `force_
 
 ### 4.11 Lock, logout, restart, shutdown
 
-- Lock: `Super` + `Ctrl` + `L`, or `Super` + `Esc` → Lock. Password entry is hyprlock over a blurred wallpaper.
-- Everything else: `Super` + `Esc` → Suspend / Logout / Restart / Shutdown (these run `systemctl suspend` and `omarchy-system-logout/-reboot/-shutdown` — verified).
+- Lock: `Super` + `Esc` (or `Super` + `Ctrl` + `L`), or `Super` + `Alt` + `Space` → System → Lock. Password entry is hyprlock over a blurred wallpaper.
+- Everything else: `Super` + `Alt` + `Space` → System → Suspend / Logout / Restart / Shutdown (these run `systemctl suspend` and `omarchy-system-logout/-reboot/-shutdown` — verified). Quick logout: `Super` + `Shift` + `Esc`.
 - Auto: screensaver after 150 s idle, lock after ~152 s (`~/.config/hypr/hypridle.conf`); toggle lock-on-idle with `Super` + `Ctrl` + `I`.
 
 ### 4.12 Reload the compositor config
@@ -292,7 +309,7 @@ Do **not** reinstall anything. In order:
 
 | Action | What happens |
 |---|---|
-| `Super` + `W` (close window) | Kills the window (and its process if it has no other windows) |
+| `Super` + `Q` (close window) | Kills the window (and its process if it has no other windows) |
 | `exit` / `Ctrl`+`D` in shell | Ends that shell; terminal window closes if it was the last process |
 | tmux detach (prefix `d`) | Session **keeps running** in background — reattach later |
 | tmux kill (prefix `K` / `tmux kill-session`) | Session and all its processes **end** |
@@ -311,9 +328,9 @@ Do **not** reinstall anything. In order:
 | 2 | Terminals: build, test, dev server | `Super`+`Alt`+`Enter` → tmux `Work`: window 1 server, window 2 tests, window 3 git |
 | 3 | Docs + browser research | `Super`+`Shift`+`Enter`; move links here silently with `Super`+`Shift`+`Alt`+`3` |
 | 4 | Database / logs / monitoring | `btop` (`Super`+`Ctrl`+`T`), `lazygit`, log tails in tmux panes |
-| 10 or scratchpad | Scratch terminal | Stash with `Super`+`Alt`+`S`, summon with `Super`+`S` |
+| 10 or scratchpad | Scratch terminal | Stash with `Super`+`Shift`+`Alt`+`S`, summon with `Super`+`Shift`+`S` |
 
-Move windows between them with `Super` + `Shift` (+`Alt`) + number; hop with `Super` + number/`Tab`.
+Move windows between them with `Super` + `Shift` (+`Alt`) + number; hop with `Super` + number, `Super` + `0` to jump back, `Super` + `Tab` to switch windows.
 
 ### 5.2 Who does what (compositor vs terminal vs shell vs tmux)
 
@@ -353,7 +370,7 @@ command -v <tool>                # is it installed?
 5. `…/input.conf` — keyboard layout `us`, compose:caps, touchpad
 6. `…/windows.conf` → `apps.conf` → 20 per-app rule files — floating/opacity/fullscreen rules
 7. `~/.config/omarchy/current/theme/hyprland.conf` — theme colors (don't edit; switch themes instead)
-8. **Your overrides:** `~/.config/hypr/{monitors,input,bindings,looknfeel,autostart}.conf` — edit these
+8. **Your overrides:** `~/.config/hypr/{monitors,input,bindings,cosmic,looknfeel,autostart}.conf` — edit these (`cosmic.conf` is the COSMIC shortcut overlay, sourced right after `bindings.conf`; it `unbind`s repurposed Omarchy keys first, then binds COSMIC keys — all `unbind`s must stay before all `bindd`s in that file)
 9. `~/.local/state/omarchy/toggles/hypr/*.conf` — feature flags (empty today)
 
 Separate daemons: `~/.config/hypr/{hypridle,hyprlock,hyprsunset,xdph}.conf`.
@@ -363,7 +380,8 @@ Separate daemons: `~/.config/hypr/{hypridle,hyprlock,hyprsunset,xdph}.conf`.
 | Behavior | File |
 |---|---|
 | Shortcuts (apps) | `~/.config/hypr/bindings.conf` |
-| Shortcuts (tiling/menus/media) | `~/.local/share/omarchy/default/hypr/bindings/*.conf` (reference; override via `bindings.conf` + `unbind`) |
+| Shortcuts (COSMIC overlay) | `~/.config/hypr/cosmic.conf` (strict mode; `unbind` Omarchy keys, then `bindd`/`bindr` COSMIC keys + resize/swap submaps) |
+| Shortcuts (tiling/menus/media) | `~/.local/share/omarchy/default/hypr/bindings/*.conf` (reference; overridden via `bindings.conf`/`cosmic.conf` + `unbind`) |
 | Monitors/scale | `~/.config/hypr/monitors.conf` |
 | Keyboard/touchpad | `~/.config/hypr/input.conf` |
 | Gaps/borders/animations | `~/.config/hypr/looknfeel.conf` (defaults in `default/hypr/looknfeel.conf`) |
@@ -386,7 +404,8 @@ Separate daemons: `~/.config/hypr/{hypridle,hyprlock,hyprsunset,xdph}.conf`.
 
 ```bash
 cp ~/.config/hypr/bindings.conf{,.bak}   # back up first
-nvim ~/.config/hypr/bindings.conf        # edit ONLY files under ~/.config
+cp ~/.config/hypr/cosmic.conf{,.bak}     # and the COSMIC overlay
+nvim ~/.config/hypr/cosmic.conf          # edit ONLY files under ~/.config
 hyprctl reload                           # apply; watch the terminal for errors
 ```
 
@@ -449,7 +468,8 @@ Validate: Hyprland reports config errors to its log/journal on reload — re-run
 3. `voxtype` (dictation) absence — the Waybar mic module and `F9`/`Super`+`Ctrl`+`X` binds are inert; unclear if intentional (Ombuntu may drop it) or pending install.
 4. Exact TTY-return key (`F1` vs `F2`) and display-manager name on this box — LightDM is the Ombuntu-documented default but wasn't directly confirmed.
 5. Multi-monitor behavior is configured but untested (single panel present).
-6. `hyprctl reload` documents as the reload path (standard for Hyprland 0.53) but was deliberately **not executed** during the read-only audit — first run is yours.
+6. `hyprctl reload` documents as the reload path (standard for Hyprland 0.53) and was executed 2026-10-14 for the COSMIC overlay (`ok`, 254 bind lines).
+7. Known COSMIC gaps with no Hyprland equivalent (by design, documented in `cosmic.conf`): `Super`+`U`/`I` tiling-tree select, a true workspace-overview applet (Walker opens instead), context-aware cross-monitor move (kept `movecurrentworkspacetomonitor` on `Shift`+`Super`+`Alt`+arrows), screen reader (`Super`+`Alt`+`S`).
 
 **Broken references (no repair attempted):** `lazydocker`, `obsidian`, `spotify`, `cliamp`, `typora`, `voxtype`, `docker`, `dotnet`, `rider`, `psql`, `sqlcmd`, `code`, `ghostty`, `foot`, `cliphist`, `hyprshot`, `brave` (basename only; `brave-browser` exists), `omarchy-cheatsheet` (use `ombuntu-cheatsheet`), `omarchy-show-keybindings` (use `omarchy-menu-keybindings`).
 
@@ -476,7 +496,7 @@ cat ~/.config/omarchy/current/theme.name; ls -l ~/.config/omarchy/current/backgr
 command -v <tool>                       # installed? (e.g. docker, dotnet, psql, lazydocker)
 
 # Back up before editing (for later use)
-cp ~/.config/hypr/bindings.conf{,.bak} && hyprctl reload
+cp ~/.config/hypr/bindings.conf{,.bak} && cp ~/.config/hypr/cosmic.conf{,.bak} && hyprctl reload
 ```
 
 *End of guide. Happy tiling — `Super`+`K` is your memory.*
